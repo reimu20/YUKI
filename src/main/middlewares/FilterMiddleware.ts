@@ -1,4 +1,4 @@
-const debug = require('debug')('yuki:filter')
+const debug = require('debug')('FilterMiddleware.ts')
 
 export default class FilterMiddleware
   implements yuki.Middleware<yuki.TextOutputObject> {

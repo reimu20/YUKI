@@ -1,11 +1,12 @@
 const request = require('request')
-import { Options } from 'request'
-const debug = require('debug')('yuki:api')
+import {Options} from 'request'
 import * as vm from 'vm'
+
+const debug = require('debug')('yuki:api')
 
 export default class Api implements yuki.Translator {
   private config: yuki.Config.OnlineApiItem
-  private requestOptions: Options
+  private requestOptions: Options & { url?: string, qs?: string }
   private responseVmContext: vm.Context = vm.createContext({
     response: '',
     result: ''
@@ -28,10 +29,11 @@ export default class Api implements yuki.Translator {
     this.requestOptions = {
       url: this.config.url,
       method: this.config.method,
+      proxy: this.config.proxy,
       headers: {
         'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:62.0) ' +
-          'Gecko/20100101 Firefox/62.0'
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:62.0) ' +
+            'Gecko/20100101 Firefox/62.0'
       }
     }
   }
@@ -61,11 +63,16 @@ export default class Api implements yuki.Translator {
       return
     }
     const requestBodyString = this.config.requestBodyFormat.replace(
-      '%TEXT%',
-      `"${text}"`
+        '%TEXT%',
+        `"${text}"`
     )
     if (this.config.requestHeaders) {
       this.requestOptions.headers = JSON.parse(this.config.requestHeaders)
+    }
+    if (this.config.requestBodyFormat.startsWith('P')) {
+      const params = JSON.parse(requestBodyString.substring(1))
+      const qs = Object.entries(params).map((row) => `${row[0]}=${encodeURIComponent(row[1] as string)}`).join('&')
+      this.requestOptions.qs = `?${qs}`
     }
     if (this.config.requestBodyFormat.startsWith('X')) {
       this.requestOptions.form = JSON.parse(requestBodyString.substring(1))
@@ -73,15 +80,19 @@ export default class Api implements yuki.Translator {
       this.requestOptions.json = JSON.parse(requestBodyString.substring(1))
     } else {
       debug(
-        '[%s] no such request body type: %s',
-        this.config.name,
-        this.config.requestBodyFormat.substring(0, 1)
+          '[%s] no such request body type: %s',
+          this.config.name,
+          this.config.requestBodyFormat.substring(0, 1)
       )
     }
   }
 
   private getResponseBody (callback: (body: any) => void) {
-    request(this.requestOptions, (error: Error, response: any, body: any) => {
+    debug('[getResponseBody: info] %s ', JSON.stringify(this.requestOptions.url))
+    request({
+      ...this.requestOptions,
+      url: this.requestOptions.url + this.requestOptions.qs
+    }, (error: Error, response: any, body: any) => {
       if (error) debug('[%s error] %s', this.config.name, error)
 
       callback(body)

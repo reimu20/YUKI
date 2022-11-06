@@ -17,6 +17,7 @@ declare namespace yuki {
       enable: boolean
       url?: string
       method?: string
+      proxy?: string
       needSession?: boolean
       requestBodyFormat?: string
       requestHeaders?: string

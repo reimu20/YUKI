@@ -7,7 +7,7 @@
     },
     "localeEmulator": {
       "enable": true,
-      "exec": "C:\\LocaleEmulator\\LEProc.exe %GAME_PATH%",
+      "exec": "\"C:\\soft\\Locale.Emulator.2.5.0.1\\LEProc.exe\" %GAME_PATH%",
       "name": "Locale Emulator"
     },
     "noChanger": {
@@ -23,7 +23,7 @@
   },
   "onlineApis": [
     {
-      "enable": true,
+      "enable": false,
       "external": true,
       "jsFile": "config\\qqApi.js",
       "name": "腾讯"
@@ -35,18 +35,19 @@
       "name": "腾讯云"
     },
     {
-      "enable": true,
+      "enable": false,
       "external": true,
       "jsFile": "config\\youdaoApi.js",
       "name": "有道"
     },
     {
-      "enable": false,
-      "method": "POST",
+      "enable": true,
+      "method": "GET",
       "name": "谷歌",
-      "requestBodyFormat": "X{\"q\": %TEXT%, \"sl\": \"ja\", \"tl\": \"zh-CN\"}",
-      "responseBodyPattern": "Rclass=\"t0\">([^<]*)<",
-      "url": "https://translate.google.cn/m"
+      "proxy": "http://127.0.0.1:2021",
+      "requestBodyFormat": "P{\"q\": %TEXT%, \"sl\": \"ja\", \"tl\": \"zh-CN\"}",
+      "responseBodyPattern": "Rclass=\"result-container\">(.*?)</",
+      "url": "https://translate.google.com/m"
     },
     {
       "enable": false,
@@ -79,18 +80,18 @@
   "translators": {
     "jBeijing": {
       "dictPath": "C:\\YUKI\\yuki\\lib\\dict\\jb",
-      "enable": true,
+      "enable": false,
       "path": "C:\\JBeijing7"
     }
   },
   "dictionaries": {
     "lingoes": {
-      "enable": true,
+      "enable": false,
       "path": "C:\\YUKI\\libraries\\dict\\lingoes\\njcd.db"
     }
   },
   "mecab": {
-    "enable": true,
+    "enable": false,
     "path": "C:\\YUKI\\libraries\\pos\\mecab-ipadic"
   },
   "librariesRepoUrl": "https://github.com/project-yuki/libraries/raw/master/_pack/",

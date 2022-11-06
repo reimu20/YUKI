@@ -1,0 +1,21 @@
+如何编译
+
+1.安装nvm用于node切换多版本
+    https://github.com/coreybutler/nvm-windows/releases
+2.切换至版本10.24.1 32位
+    nvm install 10.24.1 32
+    nvm use 10.24.1 32
+    由https://ci.appveyor.com/project/tinyAdapter/yuki可知,最近一次编译成功是使用的10.24.1 32
+3.安装windows-build-tools,这个过程可能要很久,观察任务管理器来判断安装是否活动,目标python -V显示的是2.7版本
+    npm install -g windows-build-tools
+    卡安装bug的可以看https://www.cnblogs.com/yunjiao/p/16491092.html
+4.安装node-gyp,并在.npmrc文件中指定npm_config_node_gyp属性
+    npm install -g node-gyp
+    一般而已是npm_config_node_gyp=C:\Users\用户\AppData\Roaming\nvm\版本\node_modules\node-gyp\bin\node-gyp.js
+    否则编译c/c++的库时候可能会报node-gyp找不到
+5.在.npmrc文件中指定before=2020-05-30
+    基于作者最后提交合并的时间是2020-05-30,故将npm最大时间限制为此
+6.执行npm install
+    不要使用作者推荐的yarn, 因为yarn不会处理.npmrc中的before=2020-05-30
+    yarn能正常完成install,但是npm dev的时候,会有内部的依赖冲突导致无法启动
+7.执行npm dev即可启动
